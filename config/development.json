@@ -146,6 +146,7 @@
 		"push-notifications": true,
 		"reader": true,
 		"reader/comment-polling": true,
+        "reader/community-events": true,
 		"reader/conversations": true,
 		"reader/following-intro": true,
 		"reader/full-errors": true,

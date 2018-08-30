@@ -29,6 +29,7 @@ import automatedTransfer from './automated-transfer/reducer';
 import billingTransactions from './billing-transactions/reducer';
 import checklist from './checklist/reducer';
 import comments from './comments/reducer';
+import communityEvents from './community-events/reducer';
 import componentsUsageStats from './components-usage-stats/reducer';
 import concierge from './concierge/reducer';
 import connectedApplications from './connected-applications/reducer';
@@ -123,6 +124,7 @@ const reducers = {
 	billingTransactions,
 	checklist,
 	comments,
+	communityEvents,
 	componentsUsageStats,
 	concierge,
 	connectedApplications,
