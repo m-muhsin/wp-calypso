@@ -271,6 +271,15 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 		};
 	}
 
+	if ( config.isEnabled( 'signup/reader' ) ) {
+		flows.reader = {
+			steps: [ 'reader-landing', 'user' ],
+			destination: '/',
+			description: 'Signup for an account and migrate email subs to the reader.',
+			lastModified: '2018-09-04',
+		};
+	}
+
 	return flows;
 }
 

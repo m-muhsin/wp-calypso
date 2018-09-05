@@ -337,6 +337,11 @@ export function generateSteps( {
 			stepName: 'clone-cloning',
 			providesDependencies: [],
 		},
+
+		'reader-landing': {
+			stepName: 'reader-landing',
+			providesDependencies: [],
+		},
 	};
 }
 
