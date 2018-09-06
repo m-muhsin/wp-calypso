@@ -48,6 +48,10 @@ jobs:
             - ~/.npm
 
       - run:
+          name: Danger
+          command: npm run danger ci
+
+      - run:
           name: Build Server
           environment:
               NODE_ENV: test
