@@ -5,6 +5,8 @@
 import page from 'page';
 import { isDesktop } from 'lib/viewport';
 import { translate } from 'i18n-calypso';
+import { find } from 'lodash';
+import { getSiteOption } from 'state/sites/selectors';
 
 export const tasks = [
 	{
@@ -109,6 +111,18 @@ export const tasks = [
 	},
 ];
 
+export function getTasks( state, siteId ) {
+	const designType = getSiteOption( state, siteId, 'design_type' );
+
+	if ( designType === 'blog' ) {
+		return tasks;
+	}
+
+	return tasks.filter( task => {
+		return task.id !== 'avatar_uploaded' && task.id !== 'post_published';
+	} );
+}
+
 export function launchTask( { task, location, requestTour, siteSlug, track } ) {
 	const checklist_name = 'new_blog';
 	const url = task.url && task.url.replace( '$siteSlug', siteSlug );
@@ -138,4 +152,25 @@ export function launchTask( { task, location, requestTour, siteSlug, track } ) {
 	if ( tour && isDesktop() ) {
 		requestTour( tour );
 	}
+}
+
+export function getTaskUrls( posts ) {
+	const urls = {};
+	const firstPost = find( posts, { type: 'post' } );
+	const contactPage = find( posts, post => {
+		return (
+			post.type === 'page' &&
+			find( post.metadata, { key: '_headstart_post', value: '_hs_contact_page' } )
+		);
+	} );
+
+	if ( firstPost ) {
+		urls.post_published = '/post/$siteSlug/' + firstPost.ID;
+	}
+
+	if ( contactPage ) {
+		urls.contact_page_updated = '/post/$siteSlug/' + contactPage.ID;
+	}
+
+	return urls;
 }

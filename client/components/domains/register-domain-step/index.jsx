@@ -32,7 +32,6 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
 import config from 'config';
 import wpcom from 'lib/wp';
 import Card from 'components/card';
@@ -91,9 +90,9 @@ const INITIAL_SUGGESTION_QUANTITY = 2;
 const PAGE_SIZE = 10;
 const MAX_PAGES = 3;
 const SUGGESTION_QUANTITY = isPaginationEnabled ? PAGE_SIZE * MAX_PAGES : PAGE_SIZE;
+const MIN_QUERY_LENGTH = 2;
 
 const FEATURED_SUGGESTIONS_AT_TOP = [ 'group_7', 'group_8' ];
-let searchVendor = 'domainsbot';
 
 let searchQueue = [];
 let searchStackTimer = null;
@@ -109,7 +108,7 @@ function getQueryObject( props ) {
 	return {
 		query: props.selectedSite.domain.split( '.' )[ 0 ],
 		quantity: SUGGESTION_QUANTITY,
-		vendor: searchVendor,
+		vendor: props.vendor,
 		includeSubdomain: props.includeWordPressDotCom || props.includeDotBlogSubdomain,
 		surveyVertical: props.surveyVertical,
 	};
@@ -131,7 +130,7 @@ function processSearchStatQueue() {
 	}
 }
 
-function reportSearchStats( { query, section, timestamp } ) {
+function reportSearchStats( { query, section, timestamp, vendor } ) {
 	let timeDiffFromLastSearchInSeconds = 0;
 	if ( lastSearchTimestamp ) {
 		timeDiffFromLastSearchInSeconds = Math.floor( ( timestamp - lastSearchTimestamp ) / 1000 );
@@ -143,7 +142,7 @@ function reportSearchStats( { query, section, timestamp } ) {
 		section,
 		timeDiffFromLastSearchInSeconds,
 		searchCount,
-		searchVendor
+		vendor
 	);
 }
 
@@ -179,11 +178,12 @@ class RegisterDomainStep extends React.Component {
 	};
 
 	static defaultProps = {
-		onDomainsAvailabilityChange: noop,
 		analyticsSection: 'domains',
-		onSave: noop,
-		onAddMapping: noop,
 		onAddDomain: noop,
+		onAddMapping: noop,
+		onDomainsAvailabilityChange: noop,
+		onSave: noop,
+		vendor: 'domainsbot',
 	};
 
 	constructor( props ) {
@@ -377,6 +377,7 @@ class RegisterDomainStep extends React.Component {
 							describedBy={ 'step-header' }
 							dir="ltr"
 							initialValue={ this.state.lastQuery }
+							minLength={ MIN_QUERY_LENGTH }
 							maxLength={ 60 }
 							onBlur={ this.save }
 							onSearch={ this.onSearch }
@@ -587,14 +588,19 @@ class RegisterDomainStep extends React.Component {
 			return;
 		}
 
-		const loadingResults = Boolean( getFixedDomainSearch( searchQuery ) );
+		let cleanedQuery = getFixedDomainSearch( searchQuery );
+		if ( cleanedQuery.length < MIN_QUERY_LENGTH ) {
+			cleanedQuery = '';
+		}
+
+		const loadingResults = Boolean( cleanedQuery );
 
 		this.setState(
 			{
 				error: null,
 				errorData: null,
 				exactMatchDomain: null,
-				lastQuery: searchQuery,
+				lastQuery: cleanedQuery,
 				lastDomainSearched: null,
 				loadingResults,
 				loadingSubdomainResults: loadingResults,
@@ -694,8 +700,11 @@ class RegisterDomainStep extends React.Component {
 			include_wordpressdotcom: false,
 			include_dotblogsubdomain: false,
 			tld_weight_overrides: getTldWeightOverrides( this.props.designType ),
-			vendor: searchVendor,
+			vendor: this.props.vendor,
 			vertical: this.props.surveyVertical,
+			recommendation_context: get( this.props, 'selectedSite.name', '' )
+				.replace( ' ', ',' )
+				.toLocaleLowerCase(),
 			...this.getActiveFiltersForAPI(),
 		};
 
@@ -766,7 +775,7 @@ class RegisterDomainStep extends React.Component {
 			suggestions,
 			this.state.exactMatchDomain,
 			getStrippedDomainBase( domain ),
-			includes( FEATURED_SUGGESTIONS_AT_TOP, searchVendor )
+			includes( FEATURED_SUGGESTIONS_AT_TOP, this.props.vendor )
 		);
 
 		this.setState(
@@ -850,7 +859,11 @@ class RegisterDomainStep extends React.Component {
 
 	onSearch = ( searchQuery, { shouldQuerySubdomains = true } = {} ) => {
 		debug( 'onSearch handler was triggered with query', searchQuery );
-		const domain = getFixedDomainSearch( searchQuery );
+
+		let domain = getFixedDomainSearch( searchQuery );
+		if ( domain.length < MIN_QUERY_LENGTH ) {
+			domain = '';
+		}
 
 		this.setState(
 			{
@@ -866,11 +879,11 @@ class RegisterDomainStep extends React.Component {
 			return;
 		}
 
-		if ( this.props.isSignupStep ) {
-			searchVendor = abtest( 'domainSuggestionKrakenV323' );
-		}
-
-		enqueueSearchStatReport( { query: searchQuery, section: this.props.analyticsSection } );
+		enqueueSearchStatReport( {
+			query: searchQuery,
+			section: this.props.analyticsSection,
+			vendor: this.props.vendor,
+		} );
 
 		this.setState( {
 			lastDomainSearched: domain,
@@ -879,7 +892,7 @@ class RegisterDomainStep extends React.Component {
 
 		const timestamp = Date.now();
 
-		this.getAvailableTlds( domain, searchVendor );
+		this.getAvailableTlds( domain, this.props.vendor );
 		const domainSuggestions = Promise.all( [
 			this.checkDomainAvailability( domain, timestamp ),
 			this.getDomainsSuggestions( domain, timestamp ),

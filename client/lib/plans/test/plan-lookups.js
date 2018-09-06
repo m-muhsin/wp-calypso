@@ -8,6 +8,10 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
+	FEATURE_ALL_PERSONAL_FEATURES,
+	FEATURE_AUDIO_UPLOADS,
+	FEATURE_CUSTOM_DOMAIN,
+	FEATURE_VIDEO_UPLOADS,
 	GROUP_JETPACK,
 	GROUP_WPCOM,
 	PLAN_BUSINESS,
@@ -20,6 +24,8 @@ import {
 	PLAN_JETPACK_PERSONAL_MONTHLY,
 	PLAN_JETPACK_PREMIUM,
 	PLAN_JETPACK_PREMIUM_MONTHLY,
+	PLAN_BLOGGER,
+	PLAN_BLOGGER_2_YEARS,
 	PLAN_PERSONAL,
 	PLAN_PERSONAL_2_YEARS,
 	PLAN_PREMIUM,
@@ -29,6 +35,7 @@ import {
 	TERM_MONTHLY,
 	TYPE_BUSINESS,
 	TYPE_PERSONAL,
+	TYPE_BLOGGER,
 	PLANS_LIST,
 	TYPE_PREMIUM,
 	TYPE_FREE,
@@ -39,6 +46,7 @@ import {
 	isBusinessPlan,
 	isPersonalPlan,
 	isPremiumPlan,
+	isBloggerPlan,
 	isFreePlan,
 	isJetpackBusinessPlan,
 	isJetpackPersonalPlan,
@@ -47,12 +55,14 @@ import {
 	isWpComBusinessPlan,
 	isWpComPersonalPlan,
 	isWpComPremiumPlan,
+	isWpComBloggerPlan,
 	isWpComFreePlan,
 	planMatches,
 	findSimilarPlansKeys,
 	findPlansKeys,
 	getMonthlyPlanByYearly,
 	getYearlyPlanByMonthly,
+	planHasFeature,
 } from '../index';
 
 describe( 'isFreePlan', () => {
@@ -68,6 +78,22 @@ describe( 'isFreePlan', () => {
 		expect( isFreePlan( PLAN_BUSINESS ) ).to.equal( false );
 		expect( isFreePlan( PLAN_JETPACK_BUSINESS ) ).to.equal( false );
 		expect( isFreePlan( 'non-existing plan' ) ).to.equal( false );
+	} );
+} );
+
+describe( 'isBloggerPlan', () => {
+	test( 'should return true for blogger plans', () => {
+		expect( isBloggerPlan( PLAN_BLOGGER ) ).to.equal( true );
+		expect( isBloggerPlan( PLAN_BLOGGER_2_YEARS ) ).to.equal( true );
+	} );
+	test( 'should return false for non-blogger plans', () => {
+		expect( isBloggerPlan( PLAN_PREMIUM ) ).to.equal( false );
+		expect( isBloggerPlan( PLAN_PREMIUM_2_YEARS ) ).to.equal( false );
+		expect( isBloggerPlan( PLAN_JETPACK_PREMIUM ) ).to.equal( false );
+		expect( isBloggerPlan( PLAN_JETPACK_PREMIUM_MONTHLY ) ).to.equal( false );
+		expect( isBloggerPlan( PLAN_BUSINESS ) ).to.equal( false );
+		expect( isBloggerPlan( PLAN_JETPACK_BUSINESS ) ).to.equal( false );
+		expect( isBloggerPlan( 'non-existing plan' ) ).to.equal( false );
 	} );
 } );
 
@@ -156,6 +182,22 @@ describe( 'isWpComPersonalPlan', () => {
 		expect( isWpComPersonalPlan( PLAN_BUSINESS ) ).to.equal( false );
 		expect( isWpComPersonalPlan( PLAN_JETPACK_BUSINESS ) ).to.equal( false );
 		expect( isWpComPersonalPlan( 'non-exisWpComting plan' ) ).to.equal( false );
+	} );
+} );
+
+describe( 'isWpComBloggerPlan', () => {
+	test( 'should return true for blogger plans', () => {
+		expect( isWpComBloggerPlan( PLAN_BLOGGER ) ).to.equal( true );
+		expect( isWpComBloggerPlan( PLAN_BLOGGER_2_YEARS ) ).to.equal( true );
+	} );
+	test( 'should return false for non-blogger plans', () => {
+		expect( isWpComBloggerPlan( PLAN_PREMIUM ) ).to.equal( false );
+		expect( isWpComBloggerPlan( PLAN_PREMIUM_2_YEARS ) ).to.equal( false );
+		expect( isWpComBloggerPlan( PLAN_JETPACK_PREMIUM ) ).to.equal( false );
+		expect( isWpComBloggerPlan( PLAN_JETPACK_PREMIUM_MONTHLY ) ).to.equal( false );
+		expect( isWpComBloggerPlan( PLAN_BUSINESS ) ).to.equal( false );
+		expect( isWpComBloggerPlan( PLAN_JETPACK_BUSINESS ) ).to.equal( false );
+		expect( isWpComBloggerPlan( 'non-exisWpComting plan' ) ).to.equal( false );
 	} );
 } );
 
@@ -300,6 +342,8 @@ describe( 'getPlanClass', () => {
 	test( 'should return a proper class', () => {
 		expect( getPlanClass( PLAN_FREE ) ).to.equal( 'is-free-plan' );
 		expect( getPlanClass( PLAN_JETPACK_FREE ) ).to.equal( 'is-free-plan' );
+		expect( getPlanClass( PLAN_BLOGGER ) ).to.equal( 'is-blogger-plan' );
+		expect( getPlanClass( PLAN_BLOGGER_2_YEARS ) ).to.equal( 'is-blogger-plan' );
 		expect( getPlanClass( PLAN_PERSONAL ) ).to.equal( 'is-personal-plan' );
 		expect( getPlanClass( PLAN_PERSONAL_2_YEARS ) ).to.equal( 'is-personal-plan' );
 		expect( getPlanClass( PLAN_JETPACK_PERSONAL ) ).to.equal( 'is-personal-plan' );
@@ -335,6 +379,9 @@ describe( 'getPlan', () => {
 
 describe( 'findSimilarPlansKeys', () => {
 	test( 'should return a proper similar plan - by term', () => {
+		expect( findSimilarPlansKeys( PLAN_BLOGGER, { term: TERM_BIENNIALLY } ) ).to.deep.equal( [
+			PLAN_BLOGGER_2_YEARS,
+		] );
 		expect( findSimilarPlansKeys( PLAN_PERSONAL, { term: TERM_BIENNIALLY } ) ).to.deep.equal( [
 			PLAN_PERSONAL_2_YEARS,
 		] );
@@ -347,6 +394,9 @@ describe( 'findSimilarPlansKeys', () => {
 
 		expect( findSimilarPlansKeys( PLAN_PREMIUM_2_YEARS, { term: TERM_ANNUALLY } ) ).to.deep.equal( [
 			PLAN_PREMIUM,
+		] );
+		expect( findSimilarPlansKeys( PLAN_BLOGGER_2_YEARS, { term: TERM_ANNUALLY } ) ).to.deep.equal( [
+			PLAN_BLOGGER,
 		] );
 		expect( findSimilarPlansKeys( PLAN_PERSONAL_2_YEARS, { term: TERM_ANNUALLY } ) ).to.deep.equal(
 			[ PLAN_PERSONAL ]
@@ -389,6 +439,13 @@ describe( 'findSimilarPlansKeys', () => {
 	} );
 
 	test( 'should return a proper similar plan - by type and group - wp.com', () => {
+		expect(
+			findSimilarPlansKeys( PLAN_BLOGGER, { type: TYPE_BUSINESS, group: GROUP_WPCOM } )
+		).to.deep.equal( [ PLAN_BUSINESS ] );
+		expect(
+			findSimilarPlansKeys( PLAN_BLOGGER, { type: TYPE_PREMIUM, group: GROUP_WPCOM } )
+		).to.deep.equal( [ PLAN_PREMIUM ] );
+
 		expect(
 			findSimilarPlansKeys( PLAN_PERSONAL, { type: TYPE_BUSINESS, group: GROUP_WPCOM } )
 		).to.deep.equal( [ PLAN_BUSINESS ] );
@@ -531,12 +588,14 @@ describe( 'findSimilarPlansKeys', () => {
 describe( 'findPlansKeys', () => {
 	test( 'all matching plans keys - by term', () => {
 		expect( findPlansKeys( { term: TERM_BIENNIALLY } ) ).to.deep.equal( [
+			PLAN_BLOGGER_2_YEARS,
 			PLAN_PERSONAL_2_YEARS,
 			PLAN_PREMIUM_2_YEARS,
 			PLAN_BUSINESS_2_YEARS,
 		] );
 		expect( findPlansKeys( { term: TERM_ANNUALLY } ) ).to.deep.equal( [
 			PLAN_FREE,
+			PLAN_BLOGGER,
 			PLAN_PERSONAL,
 			PLAN_PREMIUM,
 			PLAN_BUSINESS,
@@ -556,6 +615,10 @@ describe( 'findPlansKeys', () => {
 		expect( findPlansKeys( { type: TYPE_FREE } ) ).to.deep.equal( [
 			PLAN_FREE,
 			PLAN_JETPACK_FREE,
+		] );
+		expect( findPlansKeys( { type: TYPE_BLOGGER } ) ).to.deep.equal( [
+			PLAN_BLOGGER,
+			PLAN_BLOGGER_2_YEARS,
 		] );
 		expect( findPlansKeys( { type: TYPE_PERSONAL } ) ).to.deep.equal( [
 			PLAN_PERSONAL,
@@ -580,6 +643,8 @@ describe( 'findPlansKeys', () => {
 	test( 'all matching plans keys - by group', () => {
 		expect( findPlansKeys( { group: GROUP_WPCOM } ) ).to.deep.equal( [
 			PLAN_FREE,
+			PLAN_BLOGGER,
+			PLAN_BLOGGER_2_YEARS,
 			PLAN_PERSONAL,
 			PLAN_PERSONAL_2_YEARS,
 			PLAN_PREMIUM,
@@ -598,6 +663,10 @@ describe( 'findPlansKeys', () => {
 		] );
 	} );
 	test( 'all matching plans keys - by group and type', () => {
+		expect( findPlansKeys( { group: GROUP_WPCOM, type: TYPE_BLOGGER } ) ).to.deep.equal( [
+			PLAN_BLOGGER,
+			PLAN_BLOGGER_2_YEARS,
+		] );
 		expect( findPlansKeys( { group: GROUP_WPCOM, type: TYPE_PERSONAL } ) ).to.deep.equal( [
 			PLAN_PERSONAL,
 			PLAN_PERSONAL_2_YEARS,
@@ -610,6 +679,7 @@ describe( 'findPlansKeys', () => {
 			PLAN_BUSINESS,
 			PLAN_BUSINESS_2_YEARS,
 		] );
+		expect( findPlansKeys( { group: GROUP_JETPACK, type: TYPE_BLOGGER } ) ).to.deep.equal( [] );
 		expect( findPlansKeys( { group: GROUP_JETPACK, type: TYPE_PERSONAL } ) ).to.deep.equal( [
 			PLAN_JETPACK_PERSONAL,
 			PLAN_JETPACK_PERSONAL_MONTHLY,
@@ -728,5 +798,23 @@ describe( 'planMatches - business', () => {
 		expect( planMatches( PLAN_JETPACK_BUSINESS_MONTHLY, { term: TERM_ANNUALLY } ) ).to.equal(
 			false
 		);
+	} );
+} );
+
+describe( 'planHasFeature', () => {
+	test( 'should return true when a plan has a plan compare feature', () => {
+		expect( planHasFeature( PLAN_PERSONAL, FEATURE_CUSTOM_DOMAIN ) ).to.be.true;
+	} );
+
+	test( 'should return true when a plan has a sign-up specific feature', () => {
+		expect( planHasFeature( PLAN_PREMIUM, FEATURE_ALL_PERSONAL_FEATURES ) ).to.be.true;
+	} );
+
+	test( 'should return true when a plan has a hidden feature', () => {
+		expect( planHasFeature( PLAN_BUSINESS, FEATURE_AUDIO_UPLOADS ) ).to.be.true;
+	} );
+
+	test( 'should return false when a plan does not have a feature', () => {
+		expect( planHasFeature( PLAN_PERSONAL, FEATURE_VIDEO_UPLOADS ) ).to.be.false;
 	} );
 } );

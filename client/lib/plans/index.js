@@ -22,6 +22,7 @@ import {
 	TERM_BIENNIALLY,
 	TYPE_BUSINESS,
 	TYPE_FREE,
+	TYPE_BLOGGER,
 	TYPE_PERSONAL,
 	TYPE_PREMIUM,
 	GROUP_WPCOM,
@@ -69,8 +70,35 @@ export function getPlanPath( plan ) {
 	return get( getPlan( plan ), 'getPathSlug', () => undefined )();
 }
 
+/**
+ * Determines if a plan has a specific feature.
+ *
+ * Collects features for a plan by calling all possible feature methods for the plan.
+ *
+ * @param   {Object|String} plan    Plan object or plan name.
+ * @param   {String}        feature Feature name.
+ * @returns {Boolean}               Whether the specified plan has the specified feature.
+ */
 export function planHasFeature( plan, feature ) {
-	return includes( get( getPlan( plan ), 'getFeatures', () => [] )(), feature );
+	const planConstantObj = getPlan( plan );
+
+	// Collect features from all plan methods (may have duplicates)
+	const allFeatures = [
+		'getPlanCompareFeatures',
+		'getPromotedFeatures',
+		'getSignupFeatures',
+		'getBlogSignupFeatures',
+		'getPortfolioSignupFeatures',
+		'getHiddenFeatures',
+	].reduce(
+		( featuresArray, featureMethodName ) => [
+			...get( planConstantObj, featureMethodName, () => [] )(),
+			...featuresArray,
+		],
+		[]
+	);
+
+	return includes( allFeatures, feature );
 }
 
 export function getCurrentTrialPeriodInDays( plan ) {
@@ -203,6 +231,10 @@ export function isPersonalPlan( planSlug ) {
 	return planMatches( planSlug, { type: TYPE_PERSONAL } );
 }
 
+export function isBloggerPlan( planSlug ) {
+	return planMatches( planSlug, { type: TYPE_BLOGGER } );
+}
+
 export function isFreePlan( planSlug ) {
 	return planMatches( planSlug, { type: TYPE_FREE } );
 }
@@ -217,6 +249,10 @@ export function isWpComPremiumPlan( planSlug ) {
 
 export function isWpComPersonalPlan( planSlug ) {
 	return planMatches( planSlug, { type: TYPE_PERSONAL, group: GROUP_WPCOM } );
+}
+
+export function isWpComBloggerPlan( planSlug ) {
+	return planMatches( planSlug, { type: TYPE_BLOGGER, group: GROUP_WPCOM } );
 }
 
 export function isWpComFreePlan( planSlug ) {
@@ -354,10 +390,10 @@ export const isPlanFeaturesEnabled = () => {
 	return isEnabled( 'manage/plan-features' );
 };
 
-export function plansLink( url, siteSlug, intervalType ) {
+export function plansLink( url, siteSlug, intervalType, forceIntervalType = false ) {
 	const parsedUrl = urlParse( url );
-	if ( 'monthly' === intervalType ) {
-		parsedUrl.pathname += '/monthly';
+	if ( 'monthly' === intervalType || forceIntervalType ) {
+		parsedUrl.pathname += '/' + intervalType;
 	}
 
 	if ( siteSlug ) {
@@ -369,7 +405,7 @@ export function plansLink( url, siteSlug, intervalType ) {
 
 export function applyTestFiltersToPlansList( planName, abtest ) {
 	const filteredPlanConstantObj = { ...getPlan( planName ) };
-	const filteredPlanFeaturesConstantList = getPlan( planName ).getFeatures( abtest );
+	const filteredPlanFeaturesConstantList = getPlan( planName ).getPlanCompareFeatures( abtest );
 
 	// these becomes no-ops when we removed some of the abtest overrides, but
 	// we're leaving the code in place for future tests
@@ -383,7 +419,7 @@ export function applyTestFiltersToPlansList( planName, abtest ) {
 	updatePlanDescriptions();
 	updatePlanFeatures();
 
-	filteredPlanConstantObj.getFeatures = () => filteredPlanFeaturesConstantList;
+	filteredPlanConstantObj.getPlanCompareFeatures = () => filteredPlanFeaturesConstantList;
 
 	return filteredPlanConstantObj;
 }
