@@ -799,8 +799,8 @@ class RegisterDomainStep extends React.Component {
 	handleSubdomainSuggestions = ( domain, timestamp ) => subdomainSuggestions => {
 		subdomainSuggestions = subdomainSuggestions.map( suggestion => {
 			suggestion.fetch_algo = endsWith( suggestion.domain_name, '.wordpress.com' )
-				? '/domains/search/wpcom/20180816'
-				: '/domains/search/dotblogsub/20180816';
+				? '/domains/search/wpcom'
+				: '/domains/search/dotblogsub';
 			return suggestion;
 		} );
 		this.props.onDomainsAvailabilityChange( true );
@@ -1005,6 +1005,8 @@ class RegisterDomainStep extends React.Component {
 				this.state.availableTlds.length > 0 ) ||
 			this.state.loadingResults;
 
+		const isSignup = this.props.isSignupStep ? '/signup' : '/domains';
+
 		return (
 			<DomainSearchResults
 				key="domain-search-results" // key is required for CSS transition of content/
@@ -1028,7 +1030,7 @@ class RegisterDomainStep extends React.Component {
 				placeholderQuantity={ PAGE_SIZE }
 				isSignupStep={ this.props.isSignupStep }
 				railcarSeed={ this.state.railcarSeed }
-				fetchAlgo={ '/domains/search/' + searchVendor + '/20180816' }
+				fetchAlgo={ '/domains/search/' + searchVendor + isSignup }
 				cart={ this.props.cart }
 			>
 				{ showTldFilterBar && (
