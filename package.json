@@ -267,7 +267,8 @@
     "test-server:watch": "npm run -s test-server -- --watch",
     "translate": "i18n-calypso --format pot --output-file ./calypso-strings.pot -e date \"**/*.js\" \"**/*.jsx\" \"!build/**\" \"!node_modules/**\" \"!public/**\"",
     "update-deps": "npm run -s rm -- node_modules && npm run -s rm -- npm-shrinkwrap.json && npm install && npm shrinkwrap",
-    "postshrinkwrap": "node -e \"fs.utimesSync( './node_modules', new Date(), new Date() );\""
+    "postshrinkwrap": "node -e \"fs.utimesSync( './node_modules', new Date(), new Date() );\"",
+    "danger": "danger"
   },
   "devDependencies": {
     "babel-core": "7.0.0-bridge.0",
@@ -276,6 +277,7 @@
     "chai": "4.1.2",
     "chai-enzyme": "1.0.0-beta.1",
     "check-node-version": "3.2.0",
+    "danger": "3.9.0",
     "enzyme": "3.6.0",
     "enzyme-adapter-react-16": "1.5.0",
     "enzyme-to-json": "3.3.4",
