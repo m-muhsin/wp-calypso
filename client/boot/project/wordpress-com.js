@@ -225,4 +225,8 @@ export function setupMiddlewares( currentUser, reduxStore ) {
 			prefHelper( document.querySelector( '.environment.is-prefs' ), reduxStore );
 		} );
 	}
+
+	if ( config.isEnabled( 'pwa/install' ) ) {
+		require( 'lib/pwa' ).init();
+	}
 }
