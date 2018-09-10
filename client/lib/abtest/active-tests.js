@@ -156,4 +156,14 @@ export default {
 		},
 		defaultVariation: 'justSearch',
 	},
+	domainTipSuggestion: {
+		datestamp: '20180910',
+		variations: {
+			domainsbot: 50,
+			group_7: 50,
+		},
+		defaultVariation: 'domainsbot',
+		assignmentMethod: 'userId',
+		allowExistingUsers: true,
+	},
 };

@@ -22,6 +22,7 @@ import Reach from '../stats-reach';
 import PostingActivity from '../post-trends';
 import StatsModule from '../stats-module';
 import statsStrings from '../stats-strings';
+import AnnualSiteStats from 'my-sites/stats/annual-site-stats';
 import MostPopular from 'my-sites/stats/most-popular';
 import LatestPostSummary from '../post-performance';
 import DomainTip from 'my-sites/domain-tip';
@@ -32,9 +33,9 @@ import SectionHeader from 'components/section-header';
 import StatsViews from '../stats-views';
 import Followers from '../stats-followers';
 import JetpackColophon from 'components/jetpack-colophon';
+import { abtest } from 'lib/abtest';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
-import AnnualSiteStats from 'my-sites/stats/annual-site-stats';
 
 const StatsInsights = props => {
 	const { followList, isJetpack, siteId, siteSlug, translate } = props;
@@ -64,7 +65,13 @@ const StatsInsights = props => {
 				<PostingActivity />
 				<SectionHeader label={ translate( 'All Time Views' ) } />
 				<StatsViews />
-				{ siteId && <DomainTip siteId={ siteId } event="stats_insights_domain" /> }
+				{ siteId && (
+					<DomainTip
+						siteId={ siteId }
+						event="stats_insights_domain"
+						vendor={ abtest( 'domainTipSuggestion' ) }
+					/>
+				) }
 				<div className="stats-insights__nonperiodic has-recent">
 					<div className="stats__module-list">
 						<div className="stats__module-column">
