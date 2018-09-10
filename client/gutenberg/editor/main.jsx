@@ -13,11 +13,7 @@ import { registerCoreBlocks } from '@wordpress/block-library';
  * Internal dependencies
  */
 import Editor from './edit-post/editor.js';
-// import QueryGutenbergCreatePost from 'components/data/query-gutenberg-create-post';
-// needed to load a post if a post ID is provided via the route
-// import QueryGutenbergSitePost from 'components/data/query-gutenberg-site-post';
 import { requestGutenbergDraftPost as requestDraftId, requestSitePost } from 'state/data-getters';
-// import getGutenbergCurrentPost from 'state/selectors/get-gutenberg-current-post';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { applyAPIMiddlewares } from './utils';
