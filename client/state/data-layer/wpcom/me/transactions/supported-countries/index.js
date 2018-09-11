@@ -65,5 +65,3 @@ registerHandlers( 'state/data-layer/wpcom/me/transactions/supported-countries/in
 		),
 	],
 } );
-
-export default {};
