@@ -9,6 +9,7 @@ import {
 } from 'state/action-types';
 
 import 'state/data-layer/wpcom/domains/countries-list/index.js';
+import 'state/data-layer/wpcom/meta/sms-country-codes';
 
 export const fetchDomainCountries = () => ( { type: COUNTRIES_DOMAINS_FETCH } );
 
