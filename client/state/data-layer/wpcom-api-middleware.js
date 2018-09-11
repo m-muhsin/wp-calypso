@@ -10,17 +10,12 @@ import httpData from './http-data';
 import httpHandlers from 'state/http';
 import { mergeHandlers } from 'state/action-watchers/utils';
 import config from 'config';
-import comments from './wpcom/sites/comments';
 import jitm from './wpcom/sites/jitm';
-import posts from './wpcom/sites/posts';
 
 registerHandlers( 'declarative resource loader', httpData );
 registerHandlers( 'raw HTTP request loader', httpHandlers );
 registerHandlers( 'WordPress API request loader', wpcomHttpHandlers );
-registerHandlers(
-	'wpcomSites',
-	mergeHandlers( comments, config.isEnabled( 'jitms' ) ? jitm : null, posts )
-);
+registerHandlers( 'wpcomSites', mergeHandlers( config.isEnabled( 'jitms' ) ? jitm : null ) );
 
 const shouldNext = action => {
 	const meta = action.meta;

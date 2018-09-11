@@ -290,5 +290,3 @@ registerHandlers(
 	'state/data-layer/wpcom/sites/comments/index.js',
 	mergeHandlers( fetchHandler, replies, likes )
 );
-
-export default {};
