@@ -1,5 +1,4 @@
 /** @format */
-/* eslint wpcalypso/jsx-classname-namespace: [2, { rootFiles: [ 'block.js' ] } ] */
 
 /**
  * External dependencies
