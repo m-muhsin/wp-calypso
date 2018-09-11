@@ -183,7 +183,6 @@ const edit = class extends Component {
 						};
 						const classNames = classnames( 'todo__item', {
 							'todo__item--done': item.done,
-							'todo__item--todo': ! item.done,
 						} );
 
 						// if we've inserted an item at this index, and it does not have a value, request autofocus
