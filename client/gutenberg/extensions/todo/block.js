@@ -1,4 +1,5 @@
 /** @format */
+/* eslint wpcalypso/jsx-classname-namespace: [ 2, { rootFiles: [ 'block.js' ] } ] */
 
 /**
  * External dependencies
@@ -156,8 +157,8 @@ const edit = class extends Component {
 	render() {
 		const { items, newItemAt } = this.state;
 		return (
-			<div className="wp-editor-a8c-todo">
-				<ul className="wp-editor-a8c-todo-list">
+			<div className="todo">
+				<ul className="todo__list">
 					{ items.map( ( item, itemIndex ) => {
 						const moveUp = () => {
 							this.moveUp( itemIndex );
@@ -180,9 +181,9 @@ const edit = class extends Component {
 						const onSplit = () => {
 							this.insertNewItemAfter( itemIndex );
 						};
-						const classNames = classnames( 'todolist-item', {
-							'item-done': item.done,
-							'item-todo': ! item.done,
+						const classNames = classnames( 'todo__item', {
+							'todo__item--done': item.done,
+							'todo__item--todo': ! item.done,
 						} );
 
 						// if we've inserted an item at this index, and it does not have a value, request autofocus
