@@ -8,14 +8,10 @@ import { getHandlers, registerHandlers } from 'state/data-layer/handler-registry
 import wpcomHttpHandlers from './wpcom-http';
 import httpData from './http-data';
 import httpHandlers from 'state/http';
-import { mergeHandlers } from 'state/action-watchers/utils';
-import config from 'config';
-import jitm from './wpcom/sites/jitm';
 
 registerHandlers( 'declarative resource loader', httpData );
 registerHandlers( 'raw HTTP request loader', httpHandlers );
 registerHandlers( 'WordPress API request loader', wpcomHttpHandlers );
-registerHandlers( 'wpcomSites', mergeHandlers( config.isEnabled( 'jitms' ) ? jitm : null ) );
 
 const shouldNext = action => {
 	const meta = action.meta;
