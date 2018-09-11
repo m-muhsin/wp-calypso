@@ -5,8 +5,6 @@
  */
 
 import { mergeHandlers } from 'state/action-watchers/utils';
-import activityLog from './activity-log';
-import gravatarUpload from './gravatar-upload';
 import helpSearch from './help/search';
 import i18n from './i18n';
 import localeGuess from './locale-guess';
@@ -21,8 +19,6 @@ import timezones from './timezones';
 import usersAuthOptions from './users/auth-options';
 
 export const handlers = mergeHandlers(
-	activityLog,
-	gravatarUpload,
 	helpSearch,
 	i18n,
 	localeGuess,

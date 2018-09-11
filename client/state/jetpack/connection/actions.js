@@ -21,7 +21,7 @@ import {
 } from 'state/action-types';
 import wp from 'lib/wp';
 
-import 'state/data-layer/wpcom/jetpack/connection/owners';
+import 'state/data-layer/wpcom/jetpack/connection/owner';
 
 export const requestJetpackConnectionStatus = siteId => {
 	return dispatch => {
