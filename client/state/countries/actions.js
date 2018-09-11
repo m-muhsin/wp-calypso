@@ -8,6 +8,8 @@ import {
 	COUNTRIES_SMS_FETCH,
 } from 'state/action-types';
 
+import 'state/data-layer/wpcom/domains/countries-list/index.js';
+
 export const fetchDomainCountries = () => ( { type: COUNTRIES_DOMAINS_FETCH } );
 
 export const fetchPaymentCountries = () => ( { type: COUNTRIES_PAYMENTS_FETCH } );
