@@ -185,8 +185,8 @@ const edit = class extends Component {
 							[ `${ className }__item--done` ]: item.done,
 						} );
 
-						// if we've inserted an item at this index, and it does not have a value, request autofocus
-						const autoFocusThisItem =
+						// if we've inserted an item at this index, and it does not have a value, request focus
+						const focusThisItem =
 							itemIndex === newItemAt && ( ! item.value || 0 === item.value.length );
 
 						return (
@@ -202,7 +202,7 @@ const edit = class extends Component {
 								onDelete={ onDelete }
 								onChange={ onChange }
 								onSplit={ onSplit }
-								autoFocus={ autoFocusThisItem }
+								focus={ focusThisItem }
 							/>
 						);
 					} ) }
