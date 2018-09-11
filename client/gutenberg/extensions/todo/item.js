@@ -17,7 +17,7 @@ export const ItemEditor = class extends Component {
 	}
 
 	componentWillReceiveProps( newProps ) {
-		if ( newProps.autoFocus && ! this.props.autoFocus ) {
+		if ( newProps.focus && ! this.props.focus ) {
 			window.requestAnimationFrame( () => {
 				this.editor.focus();
 			} );
@@ -37,9 +37,9 @@ export const ItemEditor = class extends Component {
 	}
 
 	onSetup( editor ) {
-		const { autoFocus } = this.props;
+		const { focus } = this.props;
 		this.editor = editor;
-		if ( autoFocus ) {
+		if ( focus ) {
 			window.requestAnimationFrame( () => {
 				this.editor.focus();
 			} );
