@@ -96,5 +96,3 @@ const dispatchUsersRequest = dispatchRequest( fetchUsers, receiveSuccess, noop )
 registerHandlers( 'state/data-layer/wpcom/sites/users/index.js', {
 	[ USERS_REQUEST ]: [ dispatchUsersRequest ],
 } );
-
-export default {};
