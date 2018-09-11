@@ -10,7 +10,6 @@ import activePromotions from './active-promotions';
 import activityLog from './activity-log';
 import checklist from './checklist';
 import comments from './comments';
-import concierge from './concierge';
 import domains from './domains';
 import gravatarUpload from './gravatar-upload';
 import helpSearch from './help/search';
@@ -38,7 +37,6 @@ export const handlers = mergeHandlers(
 	activityLog,
 	checklist,
 	comments,
-	concierge,
 	domains,
 	gravatarUpload,
 	helpSearch,
