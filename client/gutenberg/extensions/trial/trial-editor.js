@@ -11,8 +11,8 @@ import { RichText } from '@wordpress/editor';
 /**
  * Internal dependencies
  */
-import './style.scss';
-import './editor.scss';
+import './trial.scss';
+import './trial-editor.scss';
 
 const statuses = [
 	{ key: 'new', text: 'New' },

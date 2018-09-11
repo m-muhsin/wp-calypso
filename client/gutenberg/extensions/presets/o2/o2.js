@@ -3,4 +3,4 @@
 /**
  * Internal dependencies
  */
-import './style.scss';
+import 'gutenberg/extensions/trial/trial.js';

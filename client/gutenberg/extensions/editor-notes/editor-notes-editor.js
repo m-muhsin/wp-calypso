@@ -6,7 +6,7 @@
 import { registerBlockType } from '@wordpress/blocks';
 import { RichText } from '@wordpress/editor';
 
-import './style.scss';
+import './editor-notes-editor.scss';
 
 const attributes = {
 	notes: {

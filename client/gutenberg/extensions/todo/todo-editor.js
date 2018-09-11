@@ -15,7 +15,7 @@ import { RichText } from '@wordpress/editor';
  */
 import { ItemEditor } from './item';
 
-import './editor.scss';
+import './todo-editor.scss';
 
 const blockAttributes = {
 	list: {

@@ -11,7 +11,7 @@ import { TextControl } from '@wordpress/components';
 /**
  * Internal dependencies
  */
-import './style.scss';
+import './prev-next-editor.scss';
 
 const blockAttributes = {
 	prev: {
